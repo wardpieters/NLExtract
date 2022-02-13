@@ -789,7 +789,6 @@ ALTER TABLE Adresselectie
 -- CREATE extension tablefunc;
 
 
-
 BEGIN;
   SELECT PRINT_NOTICE('start: 22 verblijfsobjectgebruiksdoelactueelbestaand_PIVOT: '||current_time);
 DROP TABLE IF EXISTS  verblijfsobjectgebruiksdoelactueelbestaand_PIVOT;
@@ -808,10 +807,16 @@ coalesce(winkelfunctie,0) as winkelfunctie ,
 coalesce(overige_gebruiksfunctie,0) as overige_gebruiksfunctie
 from crosstab (
   'SELECT
-  VBOGBD.identificatie as VBO_ID,   VBOGBD.gebruiksdoelverblijfsobject, count(  VBOGBD.*) as Aantal
+  VBOGBD.identificatie as VBO_ID,
+  VBOGBD.gebruiksdoelverblijfsobject,
+  (
+    SELECT count(identificatie)
+    FROM verblijfsobjectgebruiksdoelactueelbestaand AS b
+    WHERE b.identificatie = VBOGBD.identificatie
+      AND b.gebruiksdoelverblijfsobject = VBOGBD.gebruiksdoelverblijfsobject
+  ) as Aantal
 FROM
   verblijfsobjectgebruiksdoelactueelbestaand VBOGBD
-  group by   VBOGBD.identificatie ,   VBOGBD.gebruiksdoelverblijfsobject
  ',
 
   'select distinct gebruiksdoelverblijfsobject from   verblijfsobjectgebruiksdoelactueelbestaand order by 1'
@@ -832,7 +837,6 @@ FROM
 "overige_gebruiksfunctie" integer
  ) ;
 -- 20200531 Query returned successfully: 9295812 rows affected, 01:13 minutes execution time.
-
 
 
 -- maak PK aan. Indien foutmelding dan hiervoor corrigeren

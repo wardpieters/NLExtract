@@ -37,3 +37,4 @@ CREATE TABLE nlx_bag_log (
 INSERT INTO nlx_bag_log (actie, bestand) VALUES ('log tabel aangemaakt', 'create-meta.sql');
 
 CREATE EXTENSION postgis;
+CREATE EXTENSION tablefunc;
